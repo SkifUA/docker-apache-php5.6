@@ -1,0 +1,36 @@
+version: '2'
+services:
+  code:
+    image: ubuntu:16.04
+    container_name: cdav_code
+    volumes:
+      - ../cdav/:/var/www/html
+
+  php:
+    build: ./php
+    container_name: cdav_php
+    volumes_from:
+      - code
+    links:
+      - mysql
+    ports:
+      - "81:80"
+
+  mysql:
+    image: mysql
+    container_name: cdav_mysql
+    volumes_from:
+      - mysqldata
+    ports:
+      - "3308:3306"
+    environment:
+      - MYSQL_DATABASE=caldav
+      - MYSQL_USER=dev
+      - MYSQL_PASSWORD=dev
+      - MYSQL_ROOT_PASSWORD=root
+
+  mysqldata:
+    image: ubuntu:16.04
+    container_name: cdav_mysqldata
+    volumes:
+        - /var/lib/mysql
